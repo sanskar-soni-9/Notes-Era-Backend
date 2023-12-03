@@ -9,9 +9,7 @@ import { connectDB } from "./config/mongodb.config.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 
 const app = express();
-const PORT = process.env.PORT;
-
-connectDB();
+const PORT = process.env.PORT || 3000;
 
 app.use(
   cors({
@@ -30,11 +28,13 @@ app.use("/api/subscribe", subscriptionRouter);
 
 app.use(errorHandler);
 
-const server = app.listen(PORT, () => {
-  console.log(`Server is running on port: ${PORT}.`);
-});
+connectDB().then(() => {
+  const server = app.listen(PORT, () => {
+    console.log(`Server is running on port: ${PORT}.`);
+  });
 
-process.on("unhandledRejection", (error) => {
-  console.log(`Logged Error: ${error}.`);
-  server.close(() => process.exit());
+  process.on("unhandledRejection", (error) => {
+    console.log(`Logged Error: ${error}.`);
+    server.close(() => process.exit());
+  });
 });

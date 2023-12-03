@@ -1,7 +1,7 @@
 import { Router } from "express";
 import {
   getPremium,
-  handleAddUser,
+  // handleAddUser,
   handleGetFiles,
   handleGetData,
   handleGetSubjects,
@@ -14,6 +14,6 @@ router.get("/subjects", handleGetSubjects);
 router.get("/data", handleGetData);
 router.get("/files", handleGetFiles);
 
-router.post("/addUser", handleAddUser);
+// router.post("/addUser", handleAddUser);
 
 export default router;
