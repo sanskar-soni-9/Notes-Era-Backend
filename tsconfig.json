@@ -1,18 +1,23 @@
 {
   "compilerOptions": {
-    "esModuleInterop": true,
-    "module": "ES2020",
-    "moduleResolution": "node",
-    "pretty": true,
+    "target": "ES6",
+    "module": "NodeNext",
+    "allowJs": true,
+    "removeComments": true,
     "resolveJsonModule": true,
-    "target": "es6",
-    "outDir": "./dist",
-    "baseUrl": "./src"
+    "typeRoots": ["./node_modules/@types"],
+    "sourceMap": true,
+    "outDir": "dist",
+    "strict": true,
+    "lib": ["esnext"],
+    "baseUrl": ".",
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "moduleResolution": "Node",
+    "skipLibCheck": true
   },
-  "include": [
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
 }
