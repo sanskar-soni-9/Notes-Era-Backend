@@ -8,7 +8,7 @@ const getData = async () => {
     console.error("Error occured while getting data.");
     throw err;
   }
-}
+};
 
 const getSubjects = async () => {
   try {

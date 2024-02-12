@@ -1,5 +1,4 @@
-import { Request, Response } from "express";
-const errorHandler = (error: Error, _: Request, __: Response) => {
+const errorHandler = (error: Error) => {
   if (error) console.error("Error: ", error);
 };
 
