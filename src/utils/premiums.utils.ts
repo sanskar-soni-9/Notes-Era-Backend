@@ -1,4 +1,4 @@
-import { Premiums } from "../models/premiums.model.js";
+import Premiums from "../models/premiums.model";
 
 const getData = async () => {
   try {

@@ -2,10 +2,12 @@ import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
 import cors from "cors";
-import premiumRouter from "./routes/premium.router.js";
-import subscriptionRouter from "./routes/subscription.router.js";
-import { connectDB } from "./config/mongodb.config.js";
-import { errorHandler } from "./middleware/error.middleware.js";
+import premiumRouter from "./routes/premium.router";
+import subscriptionRouter from "./routes/subscription.router";
+import modulesRouter from "./routes/modules.rotuer";
+import paymentRouter from "./routes/payment.router";
+import { connectDB } from "./config/mongodb.config";
+import { errorHandler } from "./middleware/error.middleware";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,6 +26,8 @@ app.use(
 app.use(express.json());
 app.use("/api/premium", premiumRouter);
 app.use("/api/subscribe", subscriptionRouter);
+app.use("/api/modules", modulesRouter);
+app.use("/api/payment", paymentRouter);
 
 app.use(errorHandler);
 

@@ -1,4 +1,4 @@
-import { Subscription, SubscriptionInput } from "../models/subscriptions.model.js";
+import Subscription, { SubscriptionInput } from "../models/subscriptions.model";
 
 const findSubscription = async (email: string) => {
   try {

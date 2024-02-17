@@ -1,4 +1,4 @@
-import { getDrive } from "../config/drive.config.js";
+import { getDrive } from "../config/drive.config";
 
 const drive = getDrive();
 

@@ -10,7 +10,7 @@ type PurchaseInput = {
   files: PurchaseDocument["files"];
 };
 
-const purchaseSchema = new Schema(
+const PurchaseSchema = new Schema(
   {
     email: {
       type: Schema.Types.String,
@@ -29,7 +29,8 @@ const purchaseSchema = new Schema(
 
 const Purchase: Model<PurchaseDocument> = mongoose.model<PurchaseDocument>(
   "Purchase",
-  purchaseSchema,
+  PurchaseSchema,
 );
 
-export { Purchase, PurchaseInput, PurchaseDocument };
+export default Purchase;
+export { PurchaseInput, PurchaseDocument };

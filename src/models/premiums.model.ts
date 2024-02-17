@@ -12,7 +12,7 @@ type PremiumsDocument = Document & {
   image: string;
 };
 
-const premiumsSchema = new Schema(
+const PremiumsSchema = new Schema(
   {
     year: {
       type: Schema.Types.Number,
@@ -56,7 +56,8 @@ const premiumsSchema = new Schema(
 
 const Premiums: Model<PremiumsDocument> = mongoose.model<PremiumsDocument>(
   "Premiums",
-  premiumsSchema,
+  PremiumsSchema,
 );
 
-export { Premiums, PremiumsDocument };
+export default Premiums;
+export { PremiumsDocument };

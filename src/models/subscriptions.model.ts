@@ -8,7 +8,7 @@ type SubscriptionInput = {
   email: SubscriptionDocument["email"];
 };
 
-const subscriptionSchema = new Schema(
+const SubscriptionSchema = new Schema(
   {
     email: {
       type: Schema.Types.String,
@@ -21,11 +21,8 @@ const subscriptionSchema = new Schema(
   },
 );
 
-const Subscription: Model<SubscriptionDocument> = mongoose.model<
-  SubscriptionDocument
->(
-  "Subscription",
-  subscriptionSchema,
-);
+const Subscription: Model<SubscriptionDocument> =
+  mongoose.model<SubscriptionDocument>("Subscription", SubscriptionSchema);
 
-export { Subscription, SubscriptionDocument, SubscriptionInput };
+export default Subscription;
+export { SubscriptionDocument, SubscriptionInput };

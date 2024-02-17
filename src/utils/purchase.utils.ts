@@ -1,4 +1,4 @@
-import { Purchase, PurchaseInput } from "../models/purchase.model.js";
+import Purchase, { PurchaseInput } from "../models/purchase.model";
 
 const findUser = async (email: string) => {
   try {
