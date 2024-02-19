@@ -2,8 +2,9 @@ import { Request, Response, NextFunction } from "express";
 import { createOrder } from "../utils/razorpay.utils";
 import { getAmount, getFileId } from "../utils/modules.utils";
 import { addPermission } from "../utils/drive.utils";
-import { generateHMAC } from "../utils/utils";
+import { generateHMAC, generateJWT } from "../utils/utils";
 import { addModulePurchase } from "../utils/modulePurchase.utils";
+import { verifyOrderToken } from "../utils/payment.utils";
 
 const createNewOrder = async (
   req: Request,
@@ -18,10 +19,10 @@ const createNewOrder = async (
       const { id, amount, currency } = await createOrder(
         (type === "soft" ? softCopyPrice : hardCopyPrice) * 100,
       );
-      const digest = generateHMAC(id);
+      const token = generateJWT({ orderId: id, type });
       res.json({
         order_id: id,
-        digest,
+        token,
         amount,
         currency,
         key: process.env.RAZOR_ID,
@@ -58,38 +59,25 @@ const verifyPayment = async (
       contactNumber,
       productId,
       email,
-      digest,
+      token,
       orderId,
       paymentId,
       signature,
-      purchaseType,
     } = req.body;
-    const orderDigest = generateHMAC(orderId);
-    if (digest === orderDigest) {
-      const orderSignature = generateHMAC(
-        orderId + "|" + paymentId,
-        process.env.RAZOR_SECRET,
-      );
-      if (signature === orderSignature) {
-        if (purchaseType === "soft") {
-          const fileId = await getFileId(productId);
-          if (fileId) {
-            await addPermission(email, fileId);
-            await addModulePurchase({
-              name,
-              address,
-              contactNumber,
-              productId,
-              email,
-              orderId,
-              paymentId,
-              signature,
-              purchaseType,
-            });
-            return res.json({ isErr: false, status: "success" });
-          }
-        } else if (purchaseType === "hard") {
-          console.log(`${name} bought ${productId} hard copy.`);
+    const decodedToken = verifyOrderToken(token);
+    const orderSignature = generateHMAC(
+      orderId + "|" + paymentId,
+      process.env.RAZOR_SECRET,
+    );
+    if (
+      decodedToken &&
+      decodedToken.orderId === orderId &&
+      signature === orderSignature
+    ) {
+      if (decodedToken.type === "soft") {
+        const fileId = await getFileId(productId);
+        if (fileId) {
+          await addPermission(email, fileId);
           await addModulePurchase({
             name,
             address,
@@ -99,10 +87,24 @@ const verifyPayment = async (
             orderId,
             paymentId,
             signature,
-            purchaseType,
+            purchaseType: decodedToken.type,
           });
           return res.json({ isErr: false, status: "success" });
         }
+      } else {
+        console.log(`${name} bought ${productId} hard copy.`);
+        await addModulePurchase({
+          name,
+          address,
+          contactNumber,
+          productId,
+          email,
+          orderId,
+          paymentId,
+          signature,
+          purchaseType: decodedToken.type,
+        });
+        return res.json({ isErr: false, status: "success" });
       }
     }
     res.status(500).json({
