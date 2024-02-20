@@ -19,7 +19,7 @@ const createNewOrder = async (
       const { id, amount, currency } = await createOrder(
         (type === "soft" ? softCopyPrice : hardCopyPrice) * 100,
       );
-      const token = generateJWT({ orderId: id, type });
+      const token = generateJWT({ orderId: id, type, productId });
       res.json({
         order_id: id,
         token,
@@ -57,7 +57,6 @@ const verifyPayment = async (
       name,
       address,
       contactNumber,
-      productId,
       email,
       token,
       orderId,
@@ -75,14 +74,14 @@ const verifyPayment = async (
       signature === orderSignature
     ) {
       if (decodedToken.type === "soft") {
-        const fileId = await getFileId(productId);
+        const fileId = await getFileId(decodedToken.productId);
         if (fileId) {
           await addPermission(email, fileId);
           await addModulePurchase({
             name,
             address,
             contactNumber,
-            productId,
+            productId: decodedToken.productId,
             email,
             orderId,
             paymentId,
@@ -92,12 +91,12 @@ const verifyPayment = async (
           return res.json({ isErr: false, status: "success" });
         }
       } else {
-        console.log(`${name} bought ${productId} hard copy.`);
+        console.log(`${name} bought ${decodedToken.productId} hard copy.`);
         await addModulePurchase({
           name,
           address,
           contactNumber,
-          productId,
+          productId: decodedToken.productId,
           email,
           orderId,
           paymentId,
