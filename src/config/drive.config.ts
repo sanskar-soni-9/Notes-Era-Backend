@@ -3,9 +3,13 @@ dotenv.config();
 import { google } from "googleapis";
 
 const scopes = ["https://www.googleapis.com/auth/drive"];
+
+const email = Buffer.from(process.env.DRIVE_EMAIL!, "base64").toString("utf8");
+const key = Buffer.from(process.env.DRIVE_KEY!, "base64").toString("utf8");
+
 const client = new google.auth.JWT({
-  email: process.env.DRIVE_EMAIL,
-  key: process.env.DRIVE_KEY,
+  email,
+  key,
   scopes,
 });
 
