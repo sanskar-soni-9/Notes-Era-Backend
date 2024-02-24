@@ -1,33 +1,15 @@
-import Modules, {
-  ModulesDocument,
-  FilteredModulesType,
-} from "../models/modules.model";
+import Modules, { ModulesType } from "../models/modules.model";
 
-const filterModule = (module: ModulesDocument): FilteredModulesType => ({
-  repoId: module.repoId,
-  slug: module.slug,
-  name: module.name,
-  thumbnailSrc: module.thumbnailSrc,
-  about: module.about,
-  rating: module.rating,
-  totalRatings: module.totalRatings,
-  previews: module.previews,
-  softCopyPrice: module.softCopyPrice,
-  hardCopyPrice: module.hardCopyPrice,
-  description: module.description,
-  topics: module.topics,
-});
-
-const getModules = async (): Promise<FilteredModulesType[]> => {
+const getModules = async (): Promise<ModulesType[]> => {
   const modules = await Modules.find({});
-  return modules.map(filterModule);
+  return modules;
 };
 
 const getModulesByRepoId = async (
   repoId: string,
-): Promise<FilteredModulesType[] | Record<string, never>> => {
+): Promise<ModulesType[] | Record<string, never>> => {
   const modules = await Modules.find({ repoId: repoId });
-  return modules.map(filterModule);
+  return modules;
 };
 
 const getAmount = async (slug: string) => {

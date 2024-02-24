@@ -1,6 +1,7 @@
 import mongoose, { Model, Document, Schema } from "mongoose";
 
-type FilteredModulesType = {
+type ModulesType = {
+  fileId: string;
   repoId: string;
   slug: string;
   name: string;
@@ -14,8 +15,6 @@ type FilteredModulesType = {
   description?: string;
   topics?: { title: string; description: string }[];
 };
-
-type ModulesType = FilteredModulesType & { fileId: string };
 
 type ModulesDocument = Document & ModulesType;
 
@@ -50,4 +49,4 @@ const Modules: Model<ModulesDocument> = mongoose.model<ModulesDocument>(
 );
 
 export default Modules;
-export { ModulesDocument, ModulesType, FilteredModulesType };
+export { ModulesDocument, ModulesType };

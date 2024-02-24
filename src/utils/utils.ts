@@ -1,24 +1,18 @@
 import { createHmac } from "crypto";
 import jwt from "jsonwebtoken";
-import { FilteredModulesType } from "../models/modules.model";
+import { ModulesType } from "../models/modules.model";
 import { ReposType } from "../models/repos.model";
 
 interface PayloadType {
   [key: string]: string | number;
 }
 
-const bindModulesToRepo = (
-  repo: ReposType,
-  modules: FilteredModulesType[],
-) => ({
+const bindModulesToRepo = (repo: ReposType, modules: ModulesType[]) => ({
   ...repo,
   modules: modules.filter((module) => module.repoId === repo.repoId),
 });
 
-const bindModulesToRepos = (
-  repos: ReposType[],
-  modules: FilteredModulesType[],
-) => {
+const bindModulesToRepos = (repos: ReposType[], modules: ModulesType[]) => {
   const reposWithModules = repos.map((repo) =>
     bindModulesToRepo(repo, modules),
   );
