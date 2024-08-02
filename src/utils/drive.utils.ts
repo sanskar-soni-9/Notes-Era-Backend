@@ -15,18 +15,17 @@ const addPermission = async (userEmail: string, fileId: string) => {
   }
 };
 
-const getFile = async (fileId: string) => {
+const getFileStream = async (fileId: string) => {
   try {
-    const res = await drive.files.get({
-      fileId: fileId,
-      fields: "webContentLink",
-    });
-    console.log("Got file.", res.data.webContentLink);
-    return res.data.webContentLink;
+    const res = await drive.files.get(
+      { alt: "media", fileId },
+      { responseType: "stream", retry: true, retryConfig: { retry: 2 } },
+    );
+    return res.data;
   } catch (err) {
-    console.error(`Error occured while getting file: ${fileId}`);
+    console.error(`Error occured in getFileStream. fileId: ${fileId}`);
     throw err;
   }
 };
 
-export { addPermission, getFile };
+export { addPermission, getFileStream };
