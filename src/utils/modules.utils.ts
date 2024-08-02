@@ -12,9 +12,9 @@ const getModulesByRepoId = async (
   return modules;
 };
 
-const getAmount = async (slug: string) => {
+const getAmount = async (moduleSlug: string) => {
   const result = await Modules.findOne(
-    { slug: slug },
+    { slug: moduleSlug },
     { softCopyPrice: 1, hardCopyPrice: 1 },
   );
   return {

@@ -3,14 +3,6 @@ import { addFileId, createUser, findUser } from "../utils/purchase.utils.js";
 import { getData, getFiles, getSubjects } from "../utils/premiums.utils.js";
 import { addPermission } from "../utils/drive.utils.js";
 
-const getPremium = async (_: Request, res: Response) => {
-  res.status(200).json({
-    isErr: false,
-    message: "Hi",
-    status: "success",
-  });
-};
-
 const handleGetData = async (_: Request, res: Response, next: NextFunction) => {
   try {
     const data = await getData();
@@ -149,10 +141,4 @@ const handleGetFiles = async (
   }
 };
 
-export {
-  getPremium,
-  handleAddUser,
-  handleGetData,
-  handleGetFiles,
-  handleGetSubjects,
-};
+export { handleAddUser, handleGetData, handleGetFiles, handleGetSubjects };

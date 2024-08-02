@@ -1,8 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import {
-  addSubscription,
-  findSubscription,
-} from "../utils/subscription.utils.js";
+import { addSubscription } from "../utils/subscription.utils.js";
 
 const handleSubscription = async (
   req: Request,
@@ -19,7 +16,7 @@ const handleSubscription = async (
     return;
   }
   try {
-    if (!await findSubscription(email)) await addSubscription(email);
+    await addSubscription(email);
     res.json({
       isErr: false,
       message: "Subscription added successfully",

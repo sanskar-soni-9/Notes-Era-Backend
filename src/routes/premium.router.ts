@@ -1,7 +1,5 @@
 import { Router } from "express";
 import {
-  getPremium,
-  // handleAddUser,
   handleGetFiles,
   handleGetData,
   handleGetSubjects,
@@ -9,7 +7,6 @@ import {
 
 const router = Router();
 
-router.get("/", getPremium);
 router.get("/subjects", handleGetSubjects);
 router.get("/data", handleGetData);
 router.get("/files", handleGetFiles);

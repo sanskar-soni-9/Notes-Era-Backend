@@ -15,7 +15,7 @@ const addSubscription = async (email: string) => {
       email,
     };
 
-    return await Subscription.create(userInput);
+    return await Subscription.updateOne({ email }, userInput, { upsert: true });
   } catch (err) {
     console.error("Error occured while finding user in findUser.");
     throw err;
