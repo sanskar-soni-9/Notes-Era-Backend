@@ -5,8 +5,8 @@ import {
   getFileId,
   getModules,
   getModulesByRepoId as getModulesById,
-} from "../utils/modules.utils";
-import { getRepoById, getRepos } from "../utils/repos.utils";
+} from "../services/modules.service";
+import { getRepoById, getRepos } from "../services/repos.service";
 import { bindModulesToRepo, bindModulesToRepos } from "../utils/utils";
 import { getFileStream } from "../utils/drive.utils";
 

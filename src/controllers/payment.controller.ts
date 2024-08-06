@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import { createOrder } from "../utils/razorpay.utils";
-import { getAmount, getFileId } from "../utils/modules.utils";
+import { getAmount, getFileId } from "../services/modules.service";
 import { addPermission } from "../utils/drive.utils";
 import { generateHMAC, generateJWT } from "../utils/utils";
-import { addModulePurchase } from "../utils/modulePurchase.utils";
+import { addModulePurchase } from "../services/modulePurchase.service";
 import { verifyOrderToken } from "../utils/payment.utils";
 
 const createNewOrder = async (

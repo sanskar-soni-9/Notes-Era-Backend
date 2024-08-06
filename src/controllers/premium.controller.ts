@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import { addFileId, createUser, findUser } from "../utils/purchase.utils.js";
-import { getData, getFiles, getSubjects } from "../utils/premiums.utils.js";
+import { addFileId, createUser, findUser } from "../services/purchase.service";
+import { getData, getFiles, getSubjects } from "../services/premiums.service";
 import { addPermission } from "../utils/drive.utils.js";
 
 const handleGetData = async (_: Request, res: Response, next: NextFunction) => {

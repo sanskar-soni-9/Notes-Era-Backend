@@ -1,4 +1,4 @@
-import { getRazorPay } from "../config/razorpay.config";
+import { getRazorPay } from "../configs/razorpay.config";
 
 const razorpay = getRazorPay();
 

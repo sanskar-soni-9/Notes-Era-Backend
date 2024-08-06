@@ -3,8 +3,8 @@ dotenv.config();
 import express from "express";
 import cors from "cors";
 import router from "./routes";
-import { connectDB } from "./config/mongodb.config";
-import { errorHandler } from "./middleware/error.middleware";
+import { connectDB } from "./configs/mongodb.config";
+import { errorHandler } from "./middlewares/error.middleware";
 
 const app = express();
 const PORT = process.env.PORT || 3000;

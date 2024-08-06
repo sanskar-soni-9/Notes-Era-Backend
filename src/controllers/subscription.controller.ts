@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { addSubscription } from "../utils/subscription.utils.js";
+import { addSubscription } from "../services/subscription.service";
 
 const handleSubscription = async (
   req: Request,
