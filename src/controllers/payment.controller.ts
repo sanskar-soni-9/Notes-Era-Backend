@@ -1,33 +1,48 @@
 import { Request, Response, NextFunction } from "express";
-import { createOrder } from "../utils/razorpay.utils";
+import { createOrder } from "../utils/payment.utils";
 import { getAmount, getFileId } from "../services/modules.service";
 import { addPermission } from "../utils/drive.utils";
-import { generateHMAC, generateJWT } from "../utils/utils";
+import { generateJWT } from "../utils/utils";
 import { addModulePurchase } from "../services/modulePurchase.service";
-import { verifyOrderToken } from "../utils/payment.utils";
+import { Cashfree } from "../configs/payment.config";
 
+type CreateNewOrderBody = {
+  productId: string;
+  type: "soft" | "hard";
+  name: string;
+  address: string;
+  number: number;
+  email: string;
+};
 const createNewOrder = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const { productId, type }: { productId: string; type: "soft" | "hard" } =
-      req.body;
+    const {
+      productId,
+      type,
+      name,
+      address,
+      number,
+      email,
+    }: CreateNewOrderBody = req.body;
     const { softCopyPrice, hardCopyPrice } = await getAmount(productId);
     if (softCopyPrice && hardCopyPrice) {
-      const { id, amount, currency } = await createOrder(
-        (type === "soft" ? softCopyPrice : hardCopyPrice) * 100,
+      const paymentId = await createOrder(
+        type,
+        productId,
+        type === "soft" ? softCopyPrice : hardCopyPrice,
+        name,
+        email,
+        number,
+        address,
       );
-      const token = generateJWT({ orderId: id, type, productId });
+      const token = generateJWT({ orderId: paymentId, type, productId });
       res.json({
-        order_id: id,
+        paymentId,
         token,
-        amount,
-        currency,
-        key: process.env.RAZOR_ID,
-        name: "Notes-Era",
-        description: `Order of ${productId} ${type}Copy.`,
       });
     } else {
       res.json({
@@ -47,79 +62,44 @@ const createNewOrder = async (
   }
 };
 
-const verifyPayment = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+const handleWebhook = async (req: Request, res: Response) => {
   try {
-    const {
-      name,
-      address,
-      contactNumber,
-      email,
-      token,
-      orderId,
-      paymentId,
-      signature,
-    } = req.body;
-    const decodedToken = verifyOrderToken(token);
-    const orderSignature = generateHMAC(
-      orderId + "|" + paymentId,
-      process.env.RAZOR_SECRET,
+    Cashfree.PGVerifyWebhookSignature(
+      String(req.headers["x-webhook-signature"]),
+      req.rawBody,
+      String(req.headers["x-webhook-timestamp"]),
     );
-    if (
-      decodedToken &&
-      decodedToken.orderId === orderId &&
-      signature === orderSignature
-    ) {
-      if (decodedToken.type === "soft") {
-        const fileId = await getFileId(decodedToken.productId);
+    const { body } = req;
+    if (body.type === "PAYMENT_SUCCESS_WEBHOOK") {
+      const { customer_name, customer_id, customer_email, customer_phone } =
+        body.data.customer_details;
+      const orderId = body.data.order.order_id;
+      const { product_id, type, customer_address } = body.data.order.order_tags;
+      const paymentId = body.data.payment.cf_payment_id;
+
+      if (type === "soft") {
+        const fileId = await getFileId(product_id);
         if (fileId) {
-          await addPermission(email, fileId);
-          await addModulePurchase({
-            name,
-            address,
-            contactNumber,
-            productId: decodedToken.productId,
-            email,
-            orderId,
-            paymentId,
-            signature,
-            purchaseType: decodedToken.type,
-          });
-          return res.json({ isErr: false, status: "success" });
+          await addPermission(customer_email, fileId);
         }
-      } else {
-        console.log(`${name} bought ${decodedToken.productId} hard copy.`);
-        await addModulePurchase({
-          name,
-          address,
-          contactNumber,
-          productId: decodedToken.productId,
-          email,
-          orderId,
-          paymentId,
-          signature,
-          purchaseType: decodedToken.type,
-        });
-        return res.json({ isErr: false, status: "success" });
       }
+      await addModulePurchase({
+        name: customer_name,
+        address: customer_address,
+        contactNumber: customer_phone,
+        productId: product_id,
+        email: customer_email,
+        orderId,
+        paymentId,
+        signature: customer_id,
+        purchaseType: type,
+      });
     }
-    res.status(500).json({
-      isErr: true,
-      status: "error",
-      message: "Order datails are not correct.",
-    });
+    res.json(null);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({
-      isErr: true,
-      message: "Internal error occured while verifying order.",
-      status: "error",
-    });
-    next(err);
+    console.log("PAYMENT VERIFICATION ERROR:", err);
+    res.json("troll");
   }
 };
 
-export { createNewOrder, verifyPayment };
+export { createNewOrder, handleWebhook };

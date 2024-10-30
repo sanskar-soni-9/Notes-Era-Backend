@@ -21,7 +21,14 @@ app.use(
   }),
 );
 
-app.use(express.json());
+app.use(
+  express.json({
+    limit: "2mb",
+    verify: (req, _, buf) => {
+      req.rawBody = buf.toString();
+    },
+  }),
+);
 app.use(router);
 app.use(errorHandler);
 
